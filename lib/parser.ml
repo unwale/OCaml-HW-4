@@ -108,7 +108,6 @@ and expr input =
 
 let program =
   string "let f" *> ws *> many (variable <* ws) >>= fun args_names ->
-  print_endline (String.concat ", " args_names);
   ws *> char '=' *> ws *> expr >>= fun function_body ->
   ws
   *> string "let main = print_int ("

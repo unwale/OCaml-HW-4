@@ -1,3 +1,6 @@
 (test
  (name parser)
  (libraries hw4 alcotest))
+
+(cram
+ (deps ../bin/main.exe))

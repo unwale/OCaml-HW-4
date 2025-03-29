@@ -21,17 +21,17 @@ jobs:
           path: ~/.opam
           key: ${{ runner.os }}-ocaml-static-4.14
     
-      - name: Ensure OPAM is available
+      - name: Ensure OPAM is available and install apt dependencies 
         if: steps.cache-ocaml.outputs.cache-hit == 'true'
         run: |
           sudo apt-get update
-          sudo apt-get install -y opam
+          sudo apt-get install -y opam riscv64-linux-gnu-binutils qemu-user
 
-      - name: Install OCaml and OPAM
+      - name: Install apt dependencies
         if: steps.cache-ocaml.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ocaml opam
+          sudo apt-get install -y ocaml opam riscv64-linux-gnu-binutils qemu-user
           opam init --disable-sandboxing --yes
           opam switch create 4.14.1
           eval $(opam env)
