@@ -3,18 +3,18 @@ text:
 _start:
     li a0, 24
     li a1, 60
-    call gdc
+    call gcd
     call print_int
     li a0, 0
     li a7, 93
     ecall 
 
-gdc:
+gcd:
     rem a2, a0, a1
     mv a0, a1
     mv a1, a2
-    beq a1, x0, gdc_done
-    j gdc
+    beq a1, x0, gcd_done
+    j gcd
 
-gdc_done:
+gcd_done:
     ret
