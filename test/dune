@@ -3,4 +3,4 @@
  (libraries hw4 alcotest))
 
 (cram
- (deps ../bin/main.exe))
+ (deps ../bin/main.exe rv64_runtime.s))

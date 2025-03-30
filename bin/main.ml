@@ -45,6 +45,8 @@ let generate_asm data =
        _start:\n\
        %s\n\
        mv a0, t2\n\
+       call print_int\n\
+       li a0, 0\n\
        li a7, 93\n\
        ecall\n"
   in
