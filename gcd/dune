@@ -1,0 +1,20 @@
+(rule
+ (target rv64_runtime.o)
+ (deps rv64_runtime.s)
+ (action
+  (run riscv64-linux-gnu-as -march=rv64gc %{deps} -o %{target})))
+
+(rule
+ (target gcd.o)
+ (deps gcd.s)
+ (action
+  (run riscv64-linux-gnu-as -march=rv64gc %{deps} -o %{target})))
+
+(rule
+ (target gcd.exe)
+ (deps gcd.o rv64_runtime.o)
+ (action
+  (run riscv64-linux-gnu-ld %{deps} -o %{target})))
+
+(cram
+ (deps gcd.exe))
