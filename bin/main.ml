@@ -44,6 +44,7 @@ let generate_asm data =
        .globl _start\n\
        _start:\n\
        %s\n\
+       addi sp, sp, 4\n\
        mv a0, t2\n\
        call print_int\n\
        li a0, 0\n\
