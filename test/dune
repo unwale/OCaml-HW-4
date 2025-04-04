@@ -2,5 +2,9 @@
  (name parser)
  (libraries hw4 alcotest))
 
+(test
+ (name optimizer)
+ (libraries hw4 alcotest))
+
 (cram
  (deps ../bin/main.exe rv64_runtime.s))
