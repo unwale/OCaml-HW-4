@@ -10,4 +10,4 @@ type expr =
   | Int of int
   | Variable of string
 
-val fold_constants : expr -> expr
+val canonicalize : expr -> expr
