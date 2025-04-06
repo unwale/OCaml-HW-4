@@ -7,6 +7,8 @@ type expr =
   | Sub of expr * expr
   | Mul of expr * expr
   | Div of expr * expr
+  | Shl of expr * int
+  | Shr of expr * int
   | Int of int
   | Variable of string
 
@@ -65,7 +67,7 @@ let rec sink_constants expr =
   | Sub (left, right) -> Sub (sink_constants left, sink_constants right)
   (*TODO: заменить деление на константу на умножение*)
   | Div (left, right) -> Div (sink_constants left, sink_constants right)
-  | Int _ | Variable _ -> expr
+  | _ -> expr
 
 let remove_neutral_operations = function
   | Add (Int 0, x) -> x
@@ -88,3 +90,25 @@ let canonicalize expr =
     (fun x ->
       x |> sink_constants |> fold_constants |> remove_neutral_operations)
     expr
+
+let strength_reduce expr =
+  let is_power_of_two n = if n <= 0 then false else n land (n - 1) = 0 in
+  let log2 n = int_of_float (log (float_of_int n) /. log 2.0) in
+  let rec helper = function
+    | Add (x, y) -> Add (helper x, helper y)
+    | Sub (x, y) -> Sub (helper x, helper y)
+    | Mul (x, Int y) ->
+        if is_power_of_two y then
+          let shift = log2 y in
+          Shl (helper x, shift)
+        else Mul (helper x, Int y)
+    | Mul (x, y) -> Mul (helper x, helper y)
+    | Div (x, Int y) ->
+        if is_power_of_two y then
+          let shift = log2 y in
+          Shr (helper x, shift)
+        else Div (helper x, Int y)
+    | Div (x, y) -> Div (helper x, helper y)
+    | other -> other
+  in
+  helper expr

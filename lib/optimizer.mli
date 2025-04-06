@@ -7,7 +7,10 @@ type expr =
   | Sub of expr * expr
   | Mul of expr * expr
   | Div of expr * expr
+  | Shl of expr * int
+  | Shr of expr * int
   | Int of int
   | Variable of string
 
 val canonicalize : expr -> expr
+val strength_reduce : expr -> expr

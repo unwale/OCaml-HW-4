@@ -6,6 +6,8 @@ let rec pp_expr fmt = function
   | Sub (x, y) -> Format.fprintf fmt "(%a - %a)" pp_expr x pp_expr y
   | Mul (x, y) -> Format.fprintf fmt "(%a * %a)" pp_expr x pp_expr y
   | Div (x, y) -> Format.fprintf fmt "(%a / %a)" pp_expr x pp_expr y
+  | Shl (x, y) -> Format.fprintf fmt "(%a << %d)" pp_expr x y
+  | Shr (x, y) -> Format.fprintf fmt "(%a >> %d)" pp_expr x y
   | Int n -> Format.fprintf fmt "%d" n
   | Variable v -> Format.fprintf fmt "%s" v
 
@@ -77,5 +79,37 @@ let canonicalization =
           optimized );
   ]
 
+let strength_reduce =
+  [
+    ( "strength reduction of multiplication by a power of 2",
+      `Quick,
+      fun () ->
+        let expr = Mul (Int 2, Int 4) in
+        let optimized = strength_reduce expr in
+        Alcotest.check expr_testable "optimized" (Shl (Int 2, 2)) optimized );
+    ( "strength reduction of division by a power of 2",
+      `Quick,
+      fun () ->
+        let expr = Div (Int 8, Int 4) in
+        let optimized = strength_reduce expr in
+        Alcotest.check expr_testable "optimized" (Shr (Int 8, 2)) optimized );
+    ( "no strength reduction needed (mul)",
+      `Quick,
+      fun () ->
+        let expr = Mul (Int 1, Int 3) in
+        let optimized = strength_reduce expr in
+        Alcotest.check expr_testable "optimized" expr optimized );
+    ( "no strength reduction needed (div)",
+      `Quick,
+      fun () ->
+        let expr = Div (Variable "qwerty", Int 3) in
+        let optimized = strength_reduce expr in
+        Alcotest.check expr_testable "optimized" expr optimized );
+  ]
+
 let () =
-  Alcotest.run "Optimizer tests" [ ("canonicalization", canonicalization) ]
+  Alcotest.run "Optimizer tests"
+    [
+      ("canonicalization", canonicalization);
+      ("strength reduction", strength_reduce);
+    ]
