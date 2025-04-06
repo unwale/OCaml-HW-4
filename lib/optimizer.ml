@@ -92,22 +92,21 @@ let canonicalize expr =
     expr
 
 let strength_reduce expr =
-  let is_power_of_two n = if n <= 0 then false else n land (n - 1) = 0 in
+  let is_power_of_two = function
+    | n when n <= 0 -> false
+    | n -> n land (n - 1) = 0
+  in
   let log2 n = int_of_float (log (float_of_int n) /. log 2.0) in
   let rec helper = function
     | Add (x, y) -> Add (helper x, helper y)
     | Sub (x, y) -> Sub (helper x, helper y)
-    | Mul (x, Int y) ->
-        if is_power_of_two y then
-          let shift = log2 y in
-          Shl (helper x, shift)
-        else Mul (helper x, Int y)
+    | Mul (x, Int y) when is_power_of_two y ->
+        let shift = log2 y in
+        Shl (helper x, shift)
     | Mul (x, y) -> Mul (helper x, helper y)
-    | Div (x, Int y) ->
-        if is_power_of_two y then
-          let shift = log2 y in
-          Shr (helper x, shift)
-        else Div (helper x, Int y)
+    | Div (x, Int y) when is_power_of_two y ->
+        let shift = log2 y in
+        Shr (helper x, shift)
     | Div (x, y) -> Div (helper x, helper y)
     | other -> other
   in
