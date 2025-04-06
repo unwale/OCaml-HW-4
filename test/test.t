@@ -31,3 +31,19 @@
   $ riscv64-linux-gnu-ld expr3.o rv64_runtime.o -o expr3.exe
   $ qemu-riscv64 expr3.exe
                                 93
+
+  $ echo "let f x = x * 1024" > expr3.txt
+  $ echo "let main = print_int (f 4)" >> expr3.txt
+  $ ../bin/main.exe expr3.txt
+  $ riscv64-linux-gnu-as -march=rv64gc output.s -o expr3.o
+  $ riscv64-linux-gnu-ld expr3.o rv64_runtime.o -o expr3.exe
+  $ qemu-riscv64 expr3.exe
+                              4096
+
+  $ echo "let f x = x / 4 + 25" > expr3.txt
+  $ echo "let main = print_int (f 300)" >> expr3.txt
+  $ ../bin/main.exe expr3.txt
+  $ riscv64-linux-gnu-as -march=rv64gc output.s -o expr3.o
+  $ riscv64-linux-gnu-ld expr3.o rv64_runtime.o -o expr3.exe
+  $ qemu-riscv64 expr3.exe
+                               100

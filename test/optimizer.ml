@@ -86,7 +86,7 @@ let strength_reduce =
       fun () ->
         let expr = Mul (Int 2, Int 4) in
         let optimized = strength_reduce expr in
-        Alcotest.check expr_testable "optimized" (Shl (Int 2, 2)) optimized );
+        Alcotest.check expr_testable "optimized" (Shl (Int 4, 1)) optimized );
     ( "strength reduction of division by a power of 2",
       `Quick,
       fun () ->
@@ -96,7 +96,7 @@ let strength_reduce =
     ( "no strength reduction needed (mul)",
       `Quick,
       fun () ->
-        let expr = Mul (Int 1, Int 3) in
+        let expr = Mul (Int 5, Int 3) in
         let optimized = strength_reduce expr in
         Alcotest.check expr_testable "optimized" expr optimized );
     ( "no strength reduction needed (div)",

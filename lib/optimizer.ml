@@ -100,7 +100,7 @@ let strength_reduce expr =
   let rec helper = function
     | Add (x, y) -> Add (helper x, helper y)
     | Sub (x, y) -> Sub (helper x, helper y)
-    | Mul (x, Int y) when is_power_of_two y ->
+    | Mul (Int y, x) when is_power_of_two y ->
         let shift = log2 y in
         Shl (helper x, shift)
     | Mul (x, y) -> Mul (helper x, helper y)
